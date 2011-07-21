@@ -1,0 +1,8 @@
+Emacs configuration files
+
+To install just soft link the files to your .emacs and .emacs.d:
+
+  emacs.el -> .emacs
+  emacs.d -> .emacs.d
+
+Your backups will appear under ~/.saves as well (someting to be aware of).
