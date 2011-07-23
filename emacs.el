@@ -1,9 +1,10 @@
 ;;; Load Path
+(normal-top-level-add-subdirs-to-load-path)
 (add-to-list 'load-path "~/.emacs.d/")
 
 ;;; Keyboard setup
 ; This causes C-h to function like backspace.
-(define-key global-map "\C-h" 'backward-delete-char)
+(define-key global-map [(control h)] 'backward-delete-char)
 
 (require 'smarttabs)
 (setq-default indent-tabs-mode nil)
@@ -49,16 +50,13 @@
 ;;; Attach paredit as a minor mode to all the major lisp modes.
 (add-hook-to-modes (lambda () (paredit-mode +1)) lisp-modes)
 
-;;; Rainbow delimiters
-(require 'rainbow-delimiters)
-(add-hook-to-modes 'rainbow-delimiters-mode lisp-modes)
-
 ;;; Show the 80 column indicator
 (require 'fill-column-indicator)
-(define-globalized-minor-mode 
-  global-fci-mode fci-mode (lambda () (fci-mode t)))
+(define-globalized-minor-mode global-fci-mode 
+  fci-mode (lambda () (fci-mode t)))
+
 (global-fci-mode t)
-(setq fci-rule-color "darkred")
+(setq fci-rule-color "gray40")
 (setq-default fill-column 80)
 
 (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
@@ -67,6 +65,10 @@
   '(progn
      (color-theme-initialize)
      (color-theme-midnight)))
+
+;;; Rainbow delimiters
+(require 'rainbow-delimiters)
+(add-hook-to-modes 'rainbow-delimiters-mode lisp-modes)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
