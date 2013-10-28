@@ -19,10 +19,18 @@
 ;;; interfacing with ELPA, the package archive.
 ;;; Move this code earlier if you want to reference
 ;;; packages in your .emacs.
-(when
-    (load
-     (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (package-initialize))
+(require 'package)
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+
+;; (when
+;;     (load
+;;      (expand-file-name "~/.emacs.d/elpa/package.el"))
+;;   (package-initialize))
+(require 'cask "~/.cask/cask.el")
+(cask-initialize)
+(require 'pallet)
 
 ;;;
 ;;; Helper Functions
@@ -38,6 +46,21 @@
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
 (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 
+;;; Multimode
+(require 'multi-mode)
+
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+
+(require 'web-mode) 
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode)) 
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode)) 
+(add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode)) 
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode)) 
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode)) 
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode)) 
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+
 ;; Contains a list of the lisp modes.  Useful when adding
 ;; hooks to modes in bulk.
 (defconst lisp-modes
@@ -50,15 +73,6 @@
 ;;; Attach paredit as a minor mode to all the major lisp modes.
 (add-hook-to-modes (lambda () (paredit-mode +1)) lisp-modes)
 
-;;; Show the 80 column indicator
-(require 'fill-column-indicator)
-(define-globalized-minor-mode global-fci-mode 
-  fci-mode (lambda () (fci-mode t)))
-
-(global-fci-mode t)
-(setq fci-rule-color "gray40")
-(setq-default fill-column 80)
-
 (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
 (require 'color-theme)
 (eval-after-load "color-theme"
@@ -69,6 +83,9 @@
 ;;; Rainbow delimiters
 (require 'rainbow-delimiters)
 (add-hook-to-modes 'rainbow-delimiters-mode lisp-modes)
+
+(setq linum-format "%5d ")
+(global-linum-mode 1)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -88,3 +105,32 @@
 ;; Move the backup files to a different location so they don't pollute source
 ;; trees.
 (setq backup-directory-alist `(("." . "~/.saves")))
+
+ (require 'auto-complete-config)
+ (add-to-list 'ac-dictionary-directories
+     "~/.emacs.d/.cask/24.3.50.1/elpa/auto-complete-20130724.1750/dict")
+ (ac-config-default)
+ (setq ac-ignore-case nil)
+ (add-to-list 'ac-modes 'enh-ruby-mode)
+ (add-to-list 'ac-modes 'web-mode)
+
+ (require 'smartparens-config)
+ (require 'smartparens-ruby)
+ (smartparens-global-mode)
+ (show-smartparens-global-mode t)
+ (sp-with-modes '(rhtml-mode)
+   (sp-local-pair "<" ">")
+   (sp-local-pair "<%" "%>"))
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html.erb\\'" . web-mode))
+
+(autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
+(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
+
+(require 'robe)
+(add-hook 'enh-ruby-mode-hook 'robe-mode)
+
+(require 'powerline)
